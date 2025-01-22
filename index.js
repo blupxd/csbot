@@ -1,9 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { initializeSteam } = require("../services/steamService");
-const rootRoutes = require("../routes/index");
-const playerStatsRoutes = require("../routes/playerStats");
+const { initializeSteam } = require("./services/steamService");
+const rootRoutes = require("./routes/index");
+const playerStatsRoutes = require("./routes/playerStats");
 
 const app = express();
 const port = 3000;
