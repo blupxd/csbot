@@ -1,9 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { initializeSteam } = require("./services/steamService");
-const rootRoutes = require("./routes/index");
-const playerStatsRoutes = require("./routes/playerStats");
+const { initializeSteam } = require("../services/steamService");
+const rootRoutes = require("../routes/index");
+const playerStatsRoutes = require("../routes/playerStats");
 
 const app = express();
 const port = 3000;
@@ -17,7 +17,7 @@ app.use("/", rootRoutes);
 app.use("/player-stats", playerStatsRoutes);
 
 app.listen(port, async () => {
-  console.log(`Server radi na http://localhost:${port}`);
+  console.log(`Server radi na PORT: ${port}`);
   try {
     await initializeSteam();
     console.log("Steam i CS:GO klijent su spremni!");
