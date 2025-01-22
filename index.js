@@ -4,7 +4,7 @@ const cors = require("cors");
 const { initializeSteam } = require("./services/steamService");
 const rootRoutes = require("./routes/index");
 const playerStatsRoutes = require("./routes/playerStats");
-
+const steamGuardRoutes = require("./routes/steamGuard");
 const app = express();
 const port = 3000;
 const allowedOrigins = ["http://localhost:3000", "https://arenagg.vercel.app"];
@@ -15,6 +15,7 @@ app.use(cors({
 // Povezivanje ruta
 app.use("/", rootRoutes);
 app.use("/player-stats", playerStatsRoutes);
+app.use("/steam-guard", steamGuardRoutes);
 
 app.listen(port, async () => {
   console.log(`Server radi na PORT: ${port}`);
