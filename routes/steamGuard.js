@@ -1,22 +1,28 @@
 const express = require("express");
-const { submitSteamGuardCode } = require("./services/steamService");
+const { submitSteamGuardCode } = require("../services/steamService");
 
 const router = express.Router();
 
-// Ruta za unošenje Steam Guard koda
-router.post("/submit-steam-guard", (req, res) => {
-  const { code } = req.query;
+// GET ruta za unos Steam Guard koda
+router.get("/", async (req, res) => {
+  const { code } = req.query; // Dobijanje koda iz query parametara
 
   if (!code) {
     return res.status(400).json({ error: "Steam Guard kod je obavezan." });
   }
 
   try {
-    submitSteamGuardCode(code); // Pozivamo funkciju za prosleđivanje koda.
+    await submitSteamGuardCode(code); // Prosleđivanje koda klijentu
+
+    // Ako je kod uspešno poslat
     res.status(200).json({ message: "Steam Guard kod poslat uspešno." });
   } catch (error) {
-    console.error("Greška prilikom prosleđivanja koda:", error.message);
-    res.status(500).json({ error: "Došlo je do greške." });
+    // Ako postoji greška
+    if (!res.headersSent) {
+      // Provera da li su zaglavlja već poslana
+      console.error("Greška prilikom slanja koda:", error.message);
+      return res.status(500).json({ error: "Došlo je do greške." });
+    }
   }
 });
 

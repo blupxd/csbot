@@ -2,8 +2,7 @@ const SteamUser = require("steam-user");
 const { loadToken, saveToken } = require("./database");
 
 const client = new SteamUser();
-let pendingSteamGuardCallback = null; // Za čuvanje callback funkcije dok ne stigne kod.
-
+let pendingSteamGuardCallback = null;
 async function logInSteam() {
   const sentry = await loadToken();
   const logOnOptions = {
@@ -22,14 +21,14 @@ async function logInSteam() {
   });
 
   client.on("steamGuard", (domain, callback) => {
-    console.log(`Steam Guard kod poslan na ${domain || 'mobilni autentifikator'}.`);
-    pendingSteamGuardCallback = callback; // Čuvamo callback dok ne stigne kod.
-    console.log("Čeka se Steam Guard kod putem API-ja...");
+    console.log(
+      `Steam Guard kod je poslat na ${domain || "mobilni autentifikator"}.`
+    );
+    pendingSteamGuardCallback = callback; // Spremamo callback za kasniju upotrebu
   });
 
-  client.on("machineAuth", (machineAuth) => {
-    saveToken(machineAuth.bytes);
-    console.log("Sentry podaci su uspešno sačuvani.");
+  client.on("machineAuthToken", (machineAuth) => {
+    saveToken(machineAuth);
   });
 
   client.on("error", (err) => {
@@ -37,15 +36,19 @@ async function logInSteam() {
   });
 }
 
-// Funkcija za unos Steam Guard koda putem API-ja.
+async function initializeSteam() {
+  await logInSteam();
+}
+
+// Funkcija za Steam Guard kod
 function submitSteamGuardCode(code) {
   if (pendingSteamGuardCallback) {
+    console.log("Šaljemo Steam Guard kod:", code);
     pendingSteamGuardCallback(code);
-    pendingSteamGuardCallback = null; // Resetovanje nakon uspešne prijave.
-    console.log("Steam Guard kod je poslat klijentu!");
+    pendingSteamGuardCallback = null;
   } else {
-    console.log("Trenutno nije zatražen Steam Guard kod.");
+    console.log("Nema čekajućeg Steam Guard koda.");
   }
 }
 
-module.exports = { client, logInSteam, submitSteamGuardCode };
+module.exports = { client, initializeSteam, submitSteamGuardCode };
