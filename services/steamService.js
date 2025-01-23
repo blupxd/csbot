@@ -3,6 +3,7 @@ const { loadToken, saveToken } = require("./database");
 
 const client = new SteamUser();
 let pendingSteamGuardCallback = null;
+
 async function logInSteam() {
   const sentry = await loadToken();
   const logOnOptions = {
@@ -33,6 +34,21 @@ async function logInSteam() {
 
   client.on("error", (err) => {
     console.error("Došlo je do greške:", err.message);
+    if (err.eresult === SteamUser.EResult.InvalidPassword) {
+      console.log("Sesija je istekla, pokušavamo ponovo prijaviti korisnika...");
+      logInSteam();
+    } else if (err.eresult === SteamUser.EResult.LoggedInElsewhere) {
+      console.log("Korisnik je prijavljen na drugom uređaju, pokušavamo ponovo...");
+      logInSteam();
+    } else {
+      console.log("Pokušavamo ponovo prijaviti korisnika za 5 sekundi...");
+      setTimeout(logInSteam, 5000);
+    }
+  });
+
+  client.on("disconnected", (eresult, msg) => {
+    console.log(`Korisnik je odjavljen: ${msg}. Pokušavamo ponovo prijaviti korisnika za 5 sekundi...`);
+    setTimeout(logInSteam, 5000);
   });
 }
 
