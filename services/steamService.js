@@ -60,17 +60,6 @@ function setupEventHandlers() {
 
   client.on("error", (err) => {
     console.error("Došlo je do greške:", err.message);
-
-    if (err.eresult === SteamUser.EResult.LogonSessionReplaced) {
-      console.log(
-        "Sesija je zamenjena. Resetujemo token i pokušavamo ponovo..."
-      );
-      saveToken(null); // Brišemo refresh token
-      logInSteam();
-    } else {
-      console.log("Pokušavamo ponovo prijaviti korisnika za 5 sekundi...");
-      setTimeout(logInSteam, 5000);
-    }
   });
 
   client.on("disconnected", (eresult, msg) => {
