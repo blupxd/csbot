@@ -15,7 +15,7 @@ async function loadToken() {
     console.log("Token nije pronađen.");
     return null;
   }
-  console.log("Token učitan iz MongoDB:", entry.token);
+  console.log("Token učitan iz MongoDB");
   return entry.token;
 }
 
