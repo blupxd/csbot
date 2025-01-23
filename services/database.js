@@ -15,8 +15,9 @@ async function loadToken() {
     console.log("Token nije pronađen.");
     return null;
   }
-  console.log("Token učitan iz MongoDB!");
+  console.log("Token učitan iz MongoDB:", entry.token);
   return entry.token;
 }
+
 
 module.exports = { saveToken, loadToken };
